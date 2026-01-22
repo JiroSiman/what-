@@ -1,187 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Hi Crush</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            background-color: #ffe6f0;
-            position: relative;
-            overflow: hidden;
-        }
+<title>Hello Crush</title>
 
-        .container {
-            text-align: center;
-            z-index: 1000; /* keep main content on top */
-        }
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffe6f0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+  }
 
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
+  h1 {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+  }
 
-        button {
-            padding: 10px 25px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            position: relative;
-        }
+  .btns {
+    margin-top: 20px;
+    position: relative;
+  }
 
-        .yes {
-            background-color: #ff4d88;
-            color: white;
-        }
+  button {
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
 
-        .no {
-            background-color: #ccc;
-            z-index: 9999; /* always on top */
-        }
+  .yes {
+    background: hotpink;
+    color: white;
+    margin-right: 10px;
+    z-index: 10;
+    position: relative;
+  }
 
-        .meme {
-            position: absolute;
-            width: 140px; /* SMALLER size */
-            background: transparent; /* no background */
-            padding: 0; /* no padding */
-            z-index: 10;
-        }
-
-        .meme img {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        /* Arrow GIF */
-        .arrowGif {
-            width: 100px;  /* smaller */
-            height: auto;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 600px) {
-            .meme {
-                width: 120px; /* smaller on mobile */
-            }
-            .arrowGif {
-                width: 80px;
-            }
-        }
-    </style>
+  .no {
+    background: gray;
+    color: white;
+    position: absolute;
+  }
+  .arrow {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
 </head>
 
 <body>
 
-    <div class="container" id="mainContainer">
-        <h1>HI CRUSH 💖</h1>
-        <h3>I like you a lot, wanna go on a date?</h3>
+<h1>Hello Crush!!! 💖</h1>
 
-        <div class="buttons">
-            <a href="yes.html">
-                <button class="yes" id="yesBtn" onclick="goYes()">YES 😍</button>
-            </a>
+<div class="btns">
+  <button class="yes" onclick="yesClick()">YES</button>
+  <button class="no" onclick="noClick()">NO</button>
+</div>
+    
+<audio id="sound" preload="auto">
+  <source src="canton.mp3" type="audio/mpeg">
+</audio>
 
-            <button class="no" id="noBtn" onclick="noClick()">NO 😭</button>
-        </div>
-    </div>
+<img src="https://media.tenor.com/yso9Ncqwm5UAAAAi/click-subscribe.gif" class="arrow">
 
-    <script>
-        let noClicks = 0;
+<script>
+let noClicks = 0;
 
-        function goYes() {
-            localStorage.setItem("playSound", "true");
-            window.location.href = "yes.html";
-        }
+function yesClick() {
+  const audio = document.getElementById("sound");
+  audio.currentTime = 0;
+  audio.play(); 
 
-        const memes = [
-            "1.jpg",
-            "2.jpg",
-            "4.jpg",
-            "5.jpg",
-            "6.jpg",
-            "33.jpg"
-        ];
+  alert("Yay! 💕");
+}
 
-        const memeGifs = [
-            "https://media.tenor.com/yso9Ncqwm5UAAAAi/click-subscribe.gif"
-        ];
+function noClick() {
+  noClicks++;
 
-        let availableMemes = [...memes];
+  const noBtn = document.querySelector(".no");
 
-        function noClick() {
-            noClicks++;
+  const maxX = window.innerWidth - noBtn.offsetWidth;
+  const maxY = window.innerHeight - noBtn.offsetHeight;
 
-            const meme = document.createElement("div");
-            meme.classList.add("meme");
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
-            const main = document.getElementById("mainContainer");
-            const mainRect = main.getBoundingClientRect();
-
-            // Arrow meme on 2nd click only
-            if (noClicks === 2) {
-                const gif = document.createElement("img");
-                gif.src = memeGifs[0];
-                gif.classList.add("arrowGif");
-                meme.appendChild(gif);
-
-                // place meme below YES (fixed)
-                const yesBtn = document.getElementById("yesBtn");
-                const yesPos = yesBtn.getBoundingClientRect();
-
-                const x = yesPos.left + (yesPos.width / 2) - 50;
-                const y = yesPos.bottom + 10;
-
-                meme.style.left = x + "px";
-                meme.style.top = y + "px";
-
-            } else {
-                if (availableMemes.length === 0) return;
-
-                const randomIndex = Math.floor(Math.random() * availableMemes.length);
-                const chosen = availableMemes[randomIndex];
-                availableMemes.splice(randomIndex, 1);
-
-                const img = document.createElement("img");
-                img.src = chosen;
-                meme.appendChild(img);
-
-                let x, y;
-                do {
-                    x = Math.random() * (window.innerWidth - 200);
-                    y = Math.random() * (window.innerHeight - 200);
-                } while (
-                    x < mainRect.right &&
-                    x + 180 > mainRect.left &&
-                    y < mainRect.bottom &&
-                    y + 150 > mainRect.top
-                );
-
-                meme.style.left = x + "px";
-                meme.style.top = y + "px";
-            }
-
-            document.body.appendChild(meme);
-
-            // move NO button randomly
-            const btn = document.getElementById("noBtn");
-            const nx = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const ny = Math.random() * (window.innerHeight - btn.offsetHeight);
-
-            btn.style.position = "absolute";
-            btn.style.left = nx + "px";
-            btn.style.top = ny + "px";
-            btn.style.zIndex = 9999;
-        }
-    </script>
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+</script>
 
 </body>
 </html>
