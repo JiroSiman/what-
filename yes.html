@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YES 💖</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffe6f0, #ffd6b8);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .card {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 38px;
+            color: #ff4d88;
+        }
+
+        h2 {
+            margin: 10px 0 20px 0;
+            font-size: 20px;
+            color: #555;
+        }
+
+        .gifs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .gifs img {
+            width: 150px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            animation: pop 0.6s ease;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h3 {
+            margin: 25px 0 0 0;
+            color: #ff4d88;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>💖 YAY! 💖</h1>
+        <h2>Date confirmed 😎</h2>
+
+        <div class="gifs">
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjZyMTl5c2JyeTU0aTNuNGdvN2xvN2gwNzBkemxtd282YjlwdWN0NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Rik9n81Vda3rzr5F8h/giphy.gif" alt="cute">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExejdjMmMyNmhiMjlmODd0eWo3NGM4NTZnbmV3czIxbzA3YjVndDQ0cSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/oF5oUYTOhvFnO/giphy.gif" alt="cute">
+             <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NzZid3J2dmthcGI3YnQ3emo2ZzlxZTdtYTEzaXNoOHQwcHQ3cjEwayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/d37mEpcaGP3pudPoho/giphy.gif" alt="cute">
+        </div> 
+
+        <audio id="sound">
+            <source src="canton.mp3" type="audio/mpeg">
+        </audio>
+
+        <h3>AYIEEE slide through my dms plsss <3</h3>
+    </div>
+
+    <script>
+        window.onload = function() {
+            if (localStorage.getItem("playSound") === "true") {
+                const sound = document.getElementById("sound");
+                sound.play();
+                localStorage.removeItem("playSound");
+            }
+        }
+    </script>
+
+</body>
+</html>
