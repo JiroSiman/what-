@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width", initial-scale="1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hi Crush</title>
 
     <style>
@@ -76,6 +76,11 @@
                 width: 80px;
             }
         }
+        
+        /* Hidden audio element */
+        #clickSound {
+            display: none;
+        }
     </style>
 </head>
 
@@ -86,20 +91,48 @@
         <h3>I like you a lot, wanna go on a date?</h3>
 
         <div class="buttons">
-            <a href="yes.html">
-                <button class="yes" id="yesBtn" onclick="goYes()">YES 😍</button>
-            </a>
+            <!-- CHANGED: Removed <a> tag, gagamitin natin JavaScript -->
+            <button class="yes" id="yesBtn" onclick="goYes()">YES 😍</button>
 
             <button class="no" id="noBtn" onclick="noClick()">NO 😭</button>
         </div>
     </div>
 
+    <!-- ADD THIS: Audio element for the click sound -->
+    <audio id="clickSound" preload="auto">
+        <source src="canton.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
         let noClicks = 0;
+        
+        // Initialize audio
+        const clickSound = document.getElementById('clickSound');
+        clickSound.volume = 0.7; // Adjust volume (0.0 to 1.0)
 
-        function goYes() {
-            localStorage.setItem("playSound", "true");
-            window.location.href = "yes.html";
+        async function goYes() {
+            try {
+                console.log("Attempting to play sound...");
+                
+                // Play sound IMMEDIATELY on user click
+                clickSound.currentTime = 0; // Reset to start
+                
+                // Ito yung important part: play sound first, THEN redirect
+                await clickSound.play();
+                
+                console.log("Sound played successfully!");
+                
+                // Wait for sound to play a bit before redirecting
+                setTimeout(() => {
+                    window.location.href = "yes.html";
+                }, 300); // 0.3 second delay para marinig muna yung sound
+                
+            } catch (error) {
+                console.log("Sound autoplay blocked, redirecting anyway:", error);
+                
+                // If sound fails, redirect immediately
+                window.location.href = "yes.html";
+            }
         }
 
         const memes = [
@@ -181,6 +214,24 @@
             btn.style.top = ny + "px";
             btn.style.zIndex = 9999;
         }
+        
+        // Preload the audio file
+        window.addEventListener('load', function() {
+            // Try to load the audio file early
+            clickSound.load();
+            
+            // Small trick: mute and play immediately to "warm up" the audio
+            // This helps with mobile autoplay
+            clickSound.muted = true;
+            clickSound.play()
+                .then(() => {
+                    clickSound.pause();
+                    clickSound.muted = false;
+                })
+                .catch(() => {
+                    // Ignore errors here
+                });
+        });
     </script>
 
 </body>
