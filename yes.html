@@ -67,8 +67,7 @@
             color: #ff4d88;
             font-weight: bold;
         }
-        
-        /* Hidden auto-play button */
+
         #autoPlayTrigger {
             position: absolute;
             width: 1px;
@@ -90,30 +89,27 @@
              <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NzZid3J2dmthcGI3YnQ3emo2ZzlxZTdtYTEzaXNoOHQwcHQ3cjEwayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/d37mEpcaGP3pudPoho/giphy.gif" alt="cute">
         </div> 
 
-        <!-- AUDIO ELEMENT -->
         <audio id="sound">
             <source src="canton.mp3" type="audio/mpeg">
             Your browser does not support audio.
         </audio>
         
-        <!-- HIDDEN BUTTON TO TRIGGER SOUND -->
+       
         <button id="autoPlayTrigger">Play Sound</button>
 
         <h3>AYIEEE slide through my dms plsss <3</h3>
     </div>
 
     <script>
-        // THIS IS THE KEY: Automatically play sound when page loads
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Page loaded, attempting to play sound...");
             
             const sound = document.getElementById("sound");
             const triggerBtn = document.getElementById("autoPlayTrigger");
-            
-            // Set volume
+
             sound.volume = 0.7;
-            
-            // STRATEGY 1: Try direct autoplay (might work on some browsers)
+      
             const playPromise = sound.play();
             
             if (playPromise !== undefined) {
@@ -123,33 +119,29 @@
                     })
                     .catch(error => {
                         console.log("Direct autoplay blocked:", error.name);
-                        
-                        // STRATEGY 2: Use a hidden button click to trigger sound
+                       
                         setTimeout(() => {
                             console.log("Trying button click simulation...");
                             
-                            // Create and trigger a click event
+                            
                             const clickEvent = new MouseEvent('click', {
                                 view: window,
                                 bubbles: true,
                                 cancelable: true
                             });
-                            
-                            // Add click handler to the hidden button
+                    
                             triggerBtn.addEventListener('click', function() {
                                 console.log("Button clicked via simulation");
                                 sound.play().catch(e => {
                                     console.log("Even button click failed:", e);
-                                    
-                                    // STRATEGY 3: Show visible play button if all fails
+   
                                     showPlayButton();
                                 });
                             }, { once: true });
-                            
-                            // Trigger the click
+
                             triggerBtn.dispatchEvent(clickEvent);
                             
-                        }, 100); // Small delay
+                        }, 100); 
                     });
             }
             
@@ -174,21 +166,18 @@
                 };
                 document.querySelector('.card').appendChild(playBtn);
             }
-            
-            // STRATEGY 4: Try playing on first user interaction with the page
+
             document.body.addEventListener('click', function firstClick() {
                 sound.play().catch(e => console.log("First click also failed"));
                 document.body.removeEventListener('click', firstClick);
             }, { once: true });
             
-            // STRATEGY 5: Try playing when user touches the screen (for mobile)
             document.body.addEventListener('touchstart', function firstTouch() {
                 sound.play().catch(e => console.log("First touch failed"));
                 document.body.removeEventListener('touchstart', firstTouch);
             }, { once: true });
         });
         
-        // Also try playing when window fully loads
         window.onload = function() {
             setTimeout(() => {
                 const sound = document.getElementById("sound");
@@ -201,4 +190,5 @@
 
 </body>
 </html>
+
 
