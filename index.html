@@ -133,12 +133,10 @@
             if (isYesClicked) return;
             isYesClicked = true;
             
-            // Optional: Add click animation
             const yesBtn = document.getElementById('yesBtn');
             yesBtn.style.transform = 'scale(0.95)';
             yesBtn.style.opacity = '0.8';
-            
-            // Redirect to yes.html - DOON MAG-PLAY ANG SOUND
+    
             setTimeout(() => {
                 window.location.href = "yes.html";
             }, 200);
@@ -187,7 +185,6 @@
 
             } else {
                 if (availableMemes.length === 0) {
-                    // Reset memes if all have been shown
                     availableMemes = [...memes];
                 }
 
@@ -216,18 +213,16 @@
 
             document.body.appendChild(meme);
 
-            // Make NO button run away
+         
             const btn = document.getElementById("noBtn");
-            
-            // Calculate new position that's not under memes
+
             let nx, ny, isValidPosition;
             let attempts = 0;
             
             do {
                 nx = Math.random() * (window.innerWidth - btn.offsetWidth);
                 ny = Math.random() * (window.innerHeight - btn.offsetHeight);
-                
-                // Check if new position overlaps with main container
+      
                 isValidPosition = !(
                     nx < mainRect.right &&
                     nx + btn.offsetWidth > mainRect.left &&
@@ -242,25 +237,21 @@
             btn.style.left = nx + "px";
             btn.style.top = ny + "px";
             btn.style.zIndex = 9999;
-            
-            // Add bounce animation
+    
             btn.style.transition = "left 0.3s, top 0.3s";
-            
-            // Make button smaller after many clicks (as a joke)
+ 
             if (noClicks > 5) {
                 const scale = Math.max(0.5, 1 - (noClicks * 0.05));
                 btn.style.transform = `scale(${scale})`;
             }
         }
-        
-        // Prevent right-click on images (optional)
+
         document.addEventListener('contextmenu', function(e) {
             if (e.target.tagName === 'IMG') {
                 e.preventDefault();
             }
         });
-        
-        // Add some hearts animation in background (optional)
+    
         function createFloatingHearts() {
             if (document.querySelector('.heart')) return;
             
@@ -278,8 +269,7 @@
                     heart.classList.add('heart');
                     
                     document.body.appendChild(heart);
-                    
-                    // Animate heart floating up
+             
                     const duration = Math.random() * 3000 + 4000;
                     const keyframes = [
                         { transform: 'translateY(0) rotate(0deg)', opacity: 0.3 },
@@ -290,8 +280,7 @@
                         duration: duration,
                         easing: 'cubic-bezier(0.2, 0, 0.8, 1)'
                     });
-                    
-                    // Remove heart after animation
+ 
                     setTimeout(() => {
                         if (heart.parentNode) {
                             heart.parentNode.removeChild(heart);
@@ -301,10 +290,11 @@
             }
         }
         
-        // Start floating hearts
+     
         setInterval(createFloatingHearts, 5000);
-        createFloatingHearts(); // Initial hearts
+        createFloatingHearts(); 
     </script>
 
 </body>
 </html>
+
