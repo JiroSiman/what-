@@ -37,6 +37,11 @@
             border-radius: 8px;
             cursor: pointer;
             position: relative;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
         }
 
         .yes {
@@ -55,11 +60,13 @@
             background: transparent; 
             padding: 0; 
             z-index: 10;
+            animation: float 3s ease-in-out infinite;
         }
 
         .meme img {
             width: 100%;
             border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .arrowGif {
@@ -67,6 +74,10 @@
             height: auto;
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
        
         @media (max-width: 600px) {
             .meme {
@@ -75,11 +86,26 @@
             .arrowGif {
                 width: 80px;
             }
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            button {
+                width: 150px;
+            }
         }
         
-        /* Hidden audio element */
-        #clickSound {
-            display: none;
+        h1 {
+            color: #ff4d88;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h3 {
+            color: #666;
+            font-size: 1.2em;
         }
     </style>
 </head>
@@ -91,48 +117,31 @@
         <h3>I like you a lot, wanna go on a date?</h3>
 
         <div class="buttons">
-            <!-- CHANGED: Removed <a> tag, gagamitin natin JavaScript -->
-            <button class="yes" id="yesBtn" onclick="goYes()">YES 😍</button>
+            <a href="yes.html" id="yesLink">
+                <button class="yes" id="yesBtn" onclick="goYes()">YES 😍</button>
+            </a>
 
             <button class="no" id="noBtn" onclick="noClick()">NO 😭</button>
         </div>
     </div>
 
-    <!-- ADD THIS: Audio element for the click sound -->
-    <audio id="clickSound" preload="auto">
-        <source src="canton.mp3" type="audio/mpeg">
-    </audio>
-
     <script>
         let noClicks = 0;
-        
-        // Initialize audio
-        const clickSound = document.getElementById('clickSound');
-        clickSound.volume = 0.7; // Adjust volume (0.0 to 1.0)
+        let isYesClicked = false;
 
-        async function goYes() {
-            try {
-                console.log("Attempting to play sound...");
-                
-                // Play sound IMMEDIATELY on user click
-                clickSound.currentTime = 0; // Reset to start
-                
-                // Ito yung important part: play sound first, THEN redirect
-                await clickSound.play();
-                
-                console.log("Sound played successfully!");
-                
-                // Wait for sound to play a bit before redirecting
-                setTimeout(() => {
-                    window.location.href = "yes.html";
-                }, 300); // 0.3 second delay para marinig muna yung sound
-                
-            } catch (error) {
-                console.log("Sound autoplay blocked, redirecting anyway:", error);
-                
-                // If sound fails, redirect immediately
+        function goYes() {
+            if (isYesClicked) return;
+            isYesClicked = true;
+            
+            // Optional: Add click animation
+            const yesBtn = document.getElementById('yesBtn');
+            yesBtn.style.transform = 'scale(0.95)';
+            yesBtn.style.opacity = '0.8';
+            
+            // Redirect to yes.html - DOON MAG-PLAY ANG SOUND
+            setTimeout(() => {
                 window.location.href = "yes.html";
-            }
+            }, 200);
         }
 
         const memes = [
@@ -177,7 +186,10 @@
                 meme.style.top = y + "px";
 
             } else {
-                if (availableMemes.length === 0) return;
+                if (availableMemes.length === 0) {
+                    // Reset memes if all have been shown
+                    availableMemes = [...memes];
+                }
 
                 const randomIndex = Math.floor(Math.random() * availableMemes.length);
                 const chosen = availableMemes[randomIndex];
@@ -204,34 +216,94 @@
 
             document.body.appendChild(meme);
 
-            
+            // Make NO button run away
             const btn = document.getElementById("noBtn");
-            const nx = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const ny = Math.random() * (window.innerHeight - btn.offsetHeight);
+            
+            // Calculate new position that's not under memes
+            let nx, ny, isValidPosition;
+            let attempts = 0;
+            
+            do {
+                nx = Math.random() * (window.innerWidth - btn.offsetWidth);
+                ny = Math.random() * (window.innerHeight - btn.offsetHeight);
+                
+                // Check if new position overlaps with main container
+                isValidPosition = !(
+                    nx < mainRect.right &&
+                    nx + btn.offsetWidth > mainRect.left &&
+                    ny < mainRect.bottom &&
+                    ny + btn.offsetHeight > mainRect.top
+                );
+                
+                attempts++;
+            } while (!isValidPosition && attempts < 20);
 
             btn.style.position = "absolute";
             btn.style.left = nx + "px";
             btn.style.top = ny + "px";
             btn.style.zIndex = 9999;
+            
+            // Add bounce animation
+            btn.style.transition = "left 0.3s, top 0.3s";
+            
+            // Make button smaller after many clicks (as a joke)
+            if (noClicks > 5) {
+                const scale = Math.max(0.5, 1 - (noClicks * 0.05));
+                btn.style.transform = `scale(${scale})`;
+            }
         }
         
-        // Preload the audio file
-        window.addEventListener('load', function() {
-            // Try to load the audio file early
-            clickSound.load();
-            
-            // Small trick: mute and play immediately to "warm up" the audio
-            // This helps with mobile autoplay
-            clickSound.muted = true;
-            clickSound.play()
-                .then(() => {
-                    clickSound.pause();
-                    clickSound.muted = false;
-                })
-                .catch(() => {
-                    // Ignore errors here
-                });
+        // Prevent right-click on images (optional)
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault();
+            }
         });
+        
+        // Add some hearts animation in background (optional)
+        function createFloatingHearts() {
+            if (document.querySelector('.heart')) return;
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '💖';
+                    heart.style.position = 'absolute';
+                    heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.top = '100vh';
+                    heart.style.opacity = '0.3';
+                    heart.style.zIndex = '1';
+                    heart.style.pointerEvents = 'none';
+                    heart.classList.add('heart');
+                    
+                    document.body.appendChild(heart);
+                    
+                    // Animate heart floating up
+                    const duration = Math.random() * 3000 + 4000;
+                    const keyframes = [
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 0.3 },
+                        { transform: `translateY(-${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ];
+                    
+                    heart.animate(keyframes, {
+                        duration: duration,
+                        easing: 'cubic-bezier(0.2, 0, 0.8, 1)'
+                    });
+                    
+                    // Remove heart after animation
+                    setTimeout(() => {
+                        if (heart.parentNode) {
+                            heart.parentNode.removeChild(heart);
+                        }
+                    }, duration);
+                }, i * 800);
+            }
+        }
+        
+        // Start floating hearts
+        setInterval(createFloatingHearts, 5000);
+        createFloatingHearts(); // Initial hearts
     </script>
 
 </body>
